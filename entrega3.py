@@ -1,3 +1,41 @@
+# Inicio y checks de dependencias:
+
+import sys
+
+if sys.version_info[0] >= 3 and sys.version_info[1] >= 8 or sys.version_info[0] > 3:
+    print('python version meets minimum requirements')
+else:
+    print('python version 3.8+ is requiered. please install it at: https://www.python.org/ to proceed.')
+    exit()
+
+dependencies = ("matplotlib", "numpy", "operator")
+
+import subprocess
+
+def install(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+print(f"Checking and installing dependancies... {dependencies}")
+
+doRestart = False
+
+for i in dependencies:
+    try:
+        exec(f"import {i}")
+        print(f"{i} is intalled!")
+    except:
+        print(f"INFO: Installing {i}...")
+        install(i)
+        doRestart = True
+
+if (doRestart):
+    print("Sience extra dependancies needed to be installed, the screept needs to be restarted for effects to take place... Please run script again")
+    exit("Please re-run script for changes to take place")
+
+print("All dependancies are intalled!\nStarting app...")
+
+# run app
+
 from operator import mul
 import matplotlib.pyplot as plt
 import numpy as np
@@ -196,7 +234,8 @@ def update(val = None):
     ax.set_ylim(figSize * -1, figSize)
     ax.set_zlim(figSize * -1, figSize)
     
-    plt.canvas.draw_idle()
+    if val != None:
+        plt.canvas.draw_idle()
 
 # register the update function with each slider
 separation_slider.on_changed(update)
@@ -208,5 +247,7 @@ chargeX_slider.on_changed(update)
 chargeY_slider.on_changed(update)
 chargeZ_slider.on_changed(update)
 pointValue_slider.on_changed(update)
+
+update()
 
 plt.show()
